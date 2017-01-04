@@ -1,0 +1,5 @@
+/build
+/main*
+/output
+*.swp
+*.pyc
