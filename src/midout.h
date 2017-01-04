@@ -69,8 +69,8 @@ namespace midout {
 
 #else   // MIDOUT_PROFILING
 
-#define MIDOUT_DECL(...)
-#define MIDOUT_BEGIN(...) do
+#define MIDOUT_DECL(tag)
+#define MIDOUT_BEGIN(tag, ...) do
 #define MIDOUT_END() while(0)
 
 #endif  // MIDOUT_PROFILING
