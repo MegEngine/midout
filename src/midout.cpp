@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_set>
 #include <algorithm>
+#include <mutex>
 
 #include <cstdio>
 #include <cstdlib>
@@ -40,10 +41,12 @@ std::string demangle(const char* name) {
 namespace {
     class UsedTypes {
         std::unordered_set<const char*> m_types;
+        std::mutex m_mtx;
 
         public:
 
             void add(const char *type) {
+                std::lock_guard<std::mutex> guard{m_mtx};
                 m_types.insert(type);
             }
 
@@ -61,6 +64,7 @@ namespace {
                             "midout: failed to open output file %s: %s\n",
                             output_fname, strerror(errno));
                 }
+                fprintf(fout, "midout_trace v0\n");
                 std::vector<std::string> sorted_types;
                 sorted_types.reserve(m_types.size());
                 for (auto &&i: m_types) {

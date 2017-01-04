@@ -1,6 +1,6 @@
 #!/bin/bash -e
 # $File: run.sh
-# $Date: Wed Jan 04 10:56:12 2017 +0800
+# $Date: Wed Jan 04 18:59:14 2017 +0800
 # $Author: jiakai <jia.kai66@gmail.com>
 
 cd $(dirname $0)
@@ -30,8 +30,7 @@ cd ..
 ./gen_header.py -o output/midout_gen.h output/midout_trace.*
 
 $MAKE V= TARGET=main_midout \
-    CXXFLAGS="'-DMIDOUT_GENERATED=\"output/midout_gen.h\"'" \
-    BUILD_DIR=build/run
+    CXXFLAGS='-include output/midout_gen.h' BUILD_DIR=build/run
 
 $MAKE TARGET=main_vanilla BUILD_DIR=build/vanilla
 

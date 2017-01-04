@@ -85,7 +85,7 @@ namespace midout {
 
 }
 
-#include MIDOUT_GENERATED
+MIDOUT_GENERATED
 
 #define MIDOUT_BEGIN(tag, ...)  \
     do { \
