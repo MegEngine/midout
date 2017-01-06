@@ -1,5 +1,9 @@
 #include "midout.h"
 
+// to avoid linking error for empty lib on some stupid platforms
+void midout_empty() {
+}
+
 #ifdef MIDOUT_PROFILING
 #include <vector>
 #include <unordered_set>
