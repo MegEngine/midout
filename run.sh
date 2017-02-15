@@ -1,13 +1,17 @@
 #!/bin/bash -e
 # $File: run.sh
-# $Date: Wed Feb 15 16:51:29 2017 +0800
+# $Date: Wed Feb 15 23:13:39 2017 +0800
 # $Author: jiakai <jia.kai66@gmail.com>
 
 cd $(dirname $0)
 
 MAKE="make -f Makefile.impl"
 
-rm -rf build main*
+if [ "$1" = "--clean" ]; then
+    rm -rf build main*
+    echo "clean finished"
+    exit 0
+fi
 
 $MAKE TARGET=main_prof CXXFLAGS=-DMIDOUT_PROFILING BUILD_DIR=build/prof
 
@@ -24,7 +28,7 @@ and unused modes would be stripped in the next build.
 EOF
     bash
 else
-    ./main 1 1 +
+    ./main 1 1 p
 fi
 
 cd ..
