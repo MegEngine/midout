@@ -1,11 +1,13 @@
 #!/bin/bash -e
 # $File: run.sh
-# $Date: Wed Jan 04 18:59:14 2017 +0800
+# $Date: Wed Feb 15 16:51:29 2017 +0800
 # $Author: jiakai <jia.kai66@gmail.com>
 
 cd $(dirname $0)
 
 MAKE="make -f Makefile.impl"
+
+rm -rf build main*
 
 $MAKE TARGET=main_prof CXXFLAGS=-DMIDOUT_PROFILING BUILD_DIR=build/prof
 

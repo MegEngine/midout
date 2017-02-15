@@ -5,6 +5,8 @@ void midout_empty() {
 }
 
 #ifdef MIDOUT_PROFILING
+#pragma message "midout profiling enabled"
+
 #include <vector>
 #include <unordered_set>
 #include <algorithm>
@@ -92,3 +94,7 @@ void midout::on_region_used(const std::type_info &type) {
 }
 
 #endif  // MIDOUT_PROFILING
+
+#ifdef MIDOUT_GENERATED
+#pragma message "stripping by midout enabled"
+#endif
