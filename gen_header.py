@@ -3,8 +3,9 @@
 
 import argparse
 import sys
+import subprocess
 
-MAGIC = 'midout_trace v0\n'
+MAGIC = 'midout_trace v1\n'
 
 class MidoutHeaderGen:
     _tag_names = None
@@ -16,7 +17,7 @@ class MidoutHeaderGen:
 
     def add_item(self, name: str):
         prefix = 'midout::Region<midout::tags::'
-        assert name.startswith(prefix), 'bad name: {}'.format(name)
+        assert name.startswith(prefix), 'bad name: {!r}'.format(name)
         comma = name.find(',', len(prefix))
         self._tag_names.add(name[len(prefix):comma])
         self._region_names.add(name)
@@ -30,6 +31,7 @@ class MidoutHeaderGen:
 
         for i in self._region_names:
             i = i.replace('midout::', '')
+            i = i.replace('__ndk1::', '')
             print('template<> \\', file=fout)
             print('struct {} {{ static constexpr bool enable = true; }}; \\'.
                   format(i), file=fout)
@@ -49,8 +51,12 @@ def main():
     for i in args.inputs:
         with open(i) as fin:
             assert fin.read(len(MAGIC)) == MAGIC, 'bad trace file'
-            for line in fin:
-                gen.add_item(line.strip())
+            demangle = subprocess.check_output(
+                ['c++filt', '-t'], input='\n'.join(list(fin)).encode('utf-8'))
+            for line in demangle.decode('utf-8').split('\n'):
+                line = line.strip()
+                if line:
+                    gen.add_item(line)
 
     if not args.output:
         gen.write(sys.stdout)
