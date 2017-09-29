@@ -7,6 +7,7 @@ void midout_empty() {
 #ifdef MIDOUT_PROFILING
 #pragma message "midout profiling enabled"
 
+#include <string>
 #include <vector>
 #include <unordered_set>
 #include <algorithm>
