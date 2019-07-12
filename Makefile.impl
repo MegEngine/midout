@@ -1,0 +1,42 @@
+TARGET ?= main
+
+CXX := g++
+
+SRC_EXT := cpp
+OPTFLAG ?= -O2
+BUILD_DIR ?= build
+
+override CXXFLAGS += \
+	-Isrc -std=c++11 -ggdb -flto \
+	-Wall -Wextra -Wnon-virtual-dtor -Wno-unused-parameter -Winvalid-pch \
+	-Wno-unused-local-typedefs \
+	$(OPTFLAG)
+override LDFLAGS += -flto
+override V ?= @
+
+CXXSOURCES := $(shell find src example -name "*.$(SRC_EXT)")
+OBJS := $(addprefix $(BUILD_DIR)/,$(CXXSOURCES:.$(SRC_EXT)=.o))
+DEPFILES := $(OBJS:.o=.d)
+
+all: $(TARGET)
+
+-include $(DEPFILES)
+
+$(BUILD_DIR)/%.o: %.$(SRC_EXT)
+	@echo "[cxx] $< ..."
+	@mkdir -pv $(dir $@)
+	$(V)$(CXX) $(CXXFLAGS) -MM -MT "$@" "$<"  > "$(@:.o=.d)"
+	$(V)$(CXX) -c $< -o $@ $(CXXFLAGS)
+
+
+$(TARGET): $(OBJS)
+	@echo "Linking ..."
+	$(V)$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+
+clean:
+	rm -rf $(BUILD_DIR) $(TARGET)
+
+.PHONY: all clean
+
+# vim: ft=make
+
