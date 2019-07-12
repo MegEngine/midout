@@ -19,6 +19,7 @@ void midout_empty() {
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 
 namespace {
     class UsedTypes {
