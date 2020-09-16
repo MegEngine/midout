@@ -1,3 +1,14 @@
+/**
+ * \file src/midout.h
+ * MegEngine is Licensed under the Apache License, Version 2.0 (the "License")
+ *
+ * Copyright (c) 2014-2020 Megvii Inc. All rights reserved.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT ARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ */
+
 #pragma once
 
 #define _MIDOUT_NR_PARAMS_GET(_1, _2, _3, _4, _5, _6, _7, _8, _n, ...) _n
