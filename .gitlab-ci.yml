@@ -1,0 +1,11 @@
+stages:
+  - sync
+
+run:
+  stage: sync
+  tags:
+    - shell
+  only:
+    - master
+  script:
+    - ./migrate/copybara  ./migrate/copy.bara.sky

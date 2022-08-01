@@ -1,0 +1,73 @@
+local_repo = 'git@git-core.megvii-inc.com:brain-sdk/midout.git'
+remote_repo = 'git@github.com:MegEngine/midout.git'
+remote_pr_url = 'https://github.com/megengine/midout'
+
+
+gitlab_files = glob(
+    [
+        '.gitignore',
+        'CONTRIBUTOR_LICENSE_AGREEMENT.md',
+        'example/**',
+        'gen_header.py',
+        'LICENSE',
+        'Makefile.impl',
+        'README.md',
+        'run.sh',
+        'src/**',
+    ]
+)
+github_files = gitlab_files
+
+
+core.workflow(
+    name = 'default',
+    origin = git.origin(
+        url = local_repo,
+        ref = 'master',
+    ),
+    destination = git.destination(
+        url = remote_repo,
+        fetch = 'mge_dev',
+        push = 'mge_dev',
+    ),
+    origin_files = gitlab_files,
+    destination_files = github_files,
+    authoring = authoring.overwrite("Megvii Engine Team <megengine@megvii.com>"),
+    mode = 'ITERATIVE',
+    transformations = [
+        metadata.expose_label("GITHUB_PUBLIC_PR_NUMBER", new_name ="Closes", separator=" #"),
+        metadata.restore_author(label='ORIGINAL_AUTHOR'),
+        metadata.scrubber('<INTERNAL>((?:\n|.)*)</INTERNAL>$'),
+        metadata.remove_label("GITHUB_PUBLIC_PR_NUMBER"),
+        metadata.remove_label("GITHUB_PR_TITLE"),
+        metadata.remove_label("GITHUB_PR_URL"),
+    ],
+)
+
+
+core.workflow(
+    name = 'import',
+    mode = 'CHANGE_REQUEST',
+    origin = git.github_pr_origin(
+        url = remote_pr_url,
+        use_merge = True,
+    ),
+    destination = git.destination(
+        url = local_repo,
+        fetch = 'master',
+        push = 'master',
+        integrates = [],
+    ),
+    set_rev_id = False,
+    origin_files = github_files,
+    destination_files = gitlab_files,
+    authoring = authoring.pass_thru("Dude <email@email.com>"),
+
+    transformations = [
+        metadata.replace_message("${GITHUB_PR_TITLE}\n\n<INTERNAL>\n${GITHUB_PR_BODY}\n</INTERNAL>\n\n"),
+        metadata.save_author(label='ORIGINAL_AUTHOR'),
+        metadata.expose_label("COPYBARA_INTEGRATE_REVIEW"),
+        metadata.expose_label("GITHUB_PR_NUMBER", new_name ="GITHUB_PUBLIC_PR_NUMBER"),
+        metadata.expose_label("GITHUB_PR_URL"),
+    ],
+)
